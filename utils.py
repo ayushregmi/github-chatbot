@@ -30,7 +30,7 @@ def check_supported_language(string):
     
     '''
     
-    return any(string.endswith(substring) for substring in supported_languages)
+    return any(string.endswith(substring) for substring in supported_files)
 
 def decode_base64(encoded_str):
     

@@ -1,5 +1,5 @@
 import re
-from github_scraper import GithubRepo
+from github_scraper import GithubRepo, GithubFile, GithubFolder
 import json
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -72,7 +72,8 @@ class Scraper:
         user, repo, branch = self.get_repo_info(url)
         
         resp = self.does_repo_exist(user, repo, branch)
-        
+
+
         if branch is None:
             branch = resp['default_branch']
         
@@ -103,5 +104,14 @@ class Scraper:
             for future in as_completed(futures):
                 self.repository.file_structure.append(future.result()) 
         
+         
+        # selecting the folders
+        for x in filter(lambda x: isinstance(x, GithubFolder), self.repository.file_structure):
+            self.repository.all_files.extend(x.get_all_files())
+
+        # selecting the files
+        for x in filter(lambda x: isinstance(x, GithubFile), self.repository.file_structure):
+            self.repository.all_files.append(x.file_name)
+
         return self.repository
 
